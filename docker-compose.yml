@@ -1,0 +1,79 @@
+version: '1'
+services:
+  ftp:
+    image: jiushuokj/ftp
+    container_name: ftp
+    ports:
+      - "20:20"
+      - "21:21"
+      - "21100-21110:21100-21110"
+    volumes: # remember to replace /folder_on_disk/ with the path to where you want to store the files on the host machine
+      - "${UAV_DATA}/result:/home/vsftpd/admin"
+      # - "./passwd:/etc/pure-ftpd/passwd"
+    environment:
+      FTP_USER: admin
+      FTP_PASS: 123
+      PASV_ADDRESS: ${IP_LOCAL}
+      PASV_MIN_PORT: 21100
+    restart: always
+    privileged: true # 添加权限
+    
+  emq:
+    image: jiushuokj/mqtt
+    container_name: emqx
+    ports:
+      - "18083:18083"
+      - "1883:1883"
+      - "8084:8084"
+      - "8883:8883"
+      - "8083:8083"
+    restart: always
+
+  mapper:
+    #docker image save at 192.168.5.10
+    image: jiushuokj/mapper
+    container_name: mapper
+    depends_on:
+      - emq
+    ports:
+      - "9099:9099"
+    volumes:
+      - "${UAV_DATA}/result/WaypointMission:/fig"
+      - "${UAV_DATA}/result/map:/map"
+    # 192.168.8.149 is the emq server ip
+    # command: ["192.168.8.140","1883"]
+    command: ["${IP_LOCAL}","1883"]
+    privileged: true # 添加权限
+    restart: always
+    
+  rtmp:
+    image: alfg/nginx-rtmp
+    container_name: rtmp
+    ports:
+      - "1935:1935"
+      - "8090:80"
+    restart: always
+  task:
+    image: jiushuokj/uav-task-server
+    container_name: task
+    ports:
+      - "8080:8080"
+    volumes: # remember to replace /folder_on_disk/ with the path to where you want to store the files on the host machine
+      - "${UAV_DATA}/result:/home/task/result" # result的目录也就是ftp的目录
+      - "${UAV_DATA}/json:/home/task/json" # 航点航线数据集
+    privileged: true # 添加权限
+    restart: always
+
+  videobridge:
+    #docker image save at 192.168.8.10
+    image: jiushuokj//videobridge
+    container_name: videobridge
+    depends_on:
+      - emq
+    ports:
+      - "33330-33339:33330-33339/udp"
+    volumes:
+      - "${UAV_DATA}/result/map:/map"
+      - "${UAV_DATA}/result/WaypointMission:/fig"
+    command: ["${IP_LOCAL}","33330"]
+    restart: always
