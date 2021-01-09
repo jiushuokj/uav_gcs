@@ -1,5 +1,7 @@
 # 使用说明
 
+- 如果下载很慢，请移步至国内gitee https://gitee.com/jiushuokj/uav_gcs
+
 ### docker环境
 
 
