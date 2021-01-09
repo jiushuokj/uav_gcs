@@ -1,4 +1,5 @@
-version: '1'
+version: '3'
+
 services:
   ftp:
     image: jiushuokj/ftp
@@ -13,7 +14,7 @@ services:
     environment:
       FTP_USER: admin
       FTP_PASS: 123
-      PASV_ADDRESS: ${IP_LOCAL}
+      PASV_ADDRESS: $IP_LOCAL
       PASV_MIN_PORT: 21100
     restart: always
     privileged: true # 添加权限
@@ -47,12 +48,13 @@ services:
     restart: always
     
   rtmp:
-    image: alfg/nginx-rtmp
+    image: jiushuokj/rtmp
     container_name: rtmp
     ports:
       - "1935:1935"
       - "8090:80"
     restart: always
+
   task:
     image: jiushuokj/uav-task-server
     container_name: task
@@ -65,8 +67,7 @@ services:
     restart: always
 
   videobridge:
-    #docker image save at 192.168.8.10
-    image: jiushuokj//videobridge
+    image: jiushuokj/videobridge
     container_name: videobridge
     depends_on:
       - emq
