@@ -25,3 +25,7 @@
   - IP_LOCAL为局域网的ip地址
 
 3. 点击启动docker-compose脚本来启动docker
+
+4. 执行uav_gcs_v1.0，安装客户端
+
+5. 从桌面运行uav_gcs_v1.0，输入服务器地址，即可使用。enjory it!
