@@ -1,3 +1,5 @@
+# 系统架构见 https://github.com/jiushuokj/uav_doc
+
 # 使用说明
 
 - 如果下载很慢，请移步至国内gitee https://gitee.com/jiushuokj/uav_gcs
